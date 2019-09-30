@@ -1,4 +1,5 @@
 body {
+  padding: 10px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -10,4 +11,24 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+td {
+width: 50px;
+height: 50px;
+text-align:center;
+/* background: grey; */
+cursor: pointer;
+}
+
+td .selected {
+  padding: 0.4em 0.7em; 
+  border-radius: 1em; 
+  background: blue;
+width: 25px;
+height: 25px;
+-moz-border-radius: 25px;
+-webkit-border-radius: 25px;
+border-radius: 25px;
+
 }
