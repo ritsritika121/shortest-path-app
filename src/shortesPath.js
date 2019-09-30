@@ -5,17 +5,18 @@ var _ = require('lodash');
 
 class ShortestPath extends React.Component {
     state = {
-        Trow: 7,
-        Tcol:7,
-        row: 7, 
-        column: 7,
+        Trow: 10,
+        Tcol:10,
+        row: 10, 
+        column: 10,
         colors: [], 
         startPoint:"", 
         endPoint:"", 
         selectedBoxes: [], 
         Queue: [], 
         shortestPathArray: [],
-        colorPath : []
+        colorPath : [],
+        shortestPath: [],
     }
 
     componentDidMount() {
@@ -40,14 +41,19 @@ class ShortestPath extends React.Component {
         let endPoint   =   (this.state.row -1) + " " + randomrow2
         this.setState({startPoint, endPoint})
 
+        
+
         this.findNextneighbours(randomrow1, 0)
 
-        // for(var j=0; j<this.state.Queue.length; j++){
-        //     var str1 = this.state.Queue[j].split(" ")
-        //     var newr = parseInt(str1[0])
-        //     var newc = parseInt(str1[1])
-        //     this.findNextneighbours(newr, newc)
-        // }
+        for(let i = randomrow1 + 1 ;i < this.state.row - 1; i++){
+            let cell = i + " " + 0
+            this.state.shortestPath.unshift(cell)
+        }
+
+        for(let j = randomrow2 - 1; j >= 0; j--){
+           let cells = (this.state.row -1) + " " + j
+           this.state.shortestPath.unshift(cells)
+        }
 
 
               
@@ -125,14 +131,28 @@ class ShortestPath extends React.Component {
         })
     }
 
+    findPath = () => {
+        const {colors} = this.state;
+        const FindPathColors = colors;
+
+        this.state.shortestPath.map(item => {
+            let colRow = item.split(" ")
+            let Row = colRow[0]
+            let Col = colRow[1]
+            FindPathColors[Row][Col] = 'blue'
+        })
+        this.setState({colors: FindPathColors})
+        
+        
+    }
+
     ResetGride = () => {
-        this.setState({row:7, column:7}, () => {
+        this.setState({row:10, column:10}, () => {
             this.initialTable()
         })
     }
 
     selectedCol = (r,c) => {
-        console.log("row/column", r, c)
         this.backgroundColor(r,c)
     }
 
@@ -176,22 +196,37 @@ class ShortestPath extends React.Component {
                     var Xr = parseInt(str1[0])
                     var Xc = parseInt(str1[1])
                     if(Xr == r && Xc == c){
-                        console.log("finding Path",this.state.Queue[j])
                        this.state.colorPath.push(this.state.Queue[j])
                        this.findNextneighbours(Xr, Xc)
                     }
                 }
+
+
             }
         
-        // console.log(colors)
-        this.setState({colors: updatedColors})
+
+        function checkColor(el){
+            let rowCloumn = el.split(" ")
+            let row = parseInt(rowCloumn[0])
+            let col = parseInt(rowCloumn[1])
+            return colors && colors[row] && colors[row][col] && colors[row][col] === 'yellow' ||  colors[row][col] === 'Pink'
+        }
+        
+       if(this.state.shortestPath.every(checkColor)){
+        this.state.shortestPath.map(item => {
+            let colRow = item.split(" ")
+            let Row = colRow[0]
+            let Col = colRow[1]
+            updatedColors[Row][Col] = 'blue'
+        })
+       }
+
+       this.setState({colors: updatedColors})
     }
 
 
     render() {
         let totalCell = (this.state.row * this.state.column)
-        console.log("colorPath", this.state.colorPath)
-        console.log("shortestPathArray", this.state.shortestPathArray)
         let rows = _.range(0, this.state.row);
         let cols =  _.range(0, this.state.column);
         let cells = _.range(0, totalCell);
@@ -199,15 +234,15 @@ class ShortestPath extends React.Component {
         return (
 
             <div>
-                <h3>Shortest Path App</h3>
+                <h1>Shortest Path App</h1>
                 <div>
-                <label>Row</label>
+                <label><h5>Row:</h5></label>
                         <input type="text"
                             name="Trow"
                             value={this.state.Trow}
                             onChange={this.handleNumberChange}
                             maxLength="20" />
-                    <label>Column</label>
+                    <label><h5>Column:</h5></label>
                         <input type="text"
                             name="Tcol"
                             value={this.state.Tcol}
@@ -215,6 +250,11 @@ class ShortestPath extends React.Component {
                             maxLength="20" />
                 <button type="button" onClick={this.GenerateGride}><b> Generate gride </b></button>
                 <button type="button" onClick={this.ResetGride}><b> Reset gride </b></button>
+                {/* <button type="button" onClick={this.findPath}><b> Find Path </b></button> */}
+
+                <br/>
+                <h5>*If U select the Shortest Path the Color will Change to blue (not anny shortest path)</h5>
+                <h5>*Other Than Shortest Path, For other paths color will change to Pink</h5>
                 </div> <br/> <br />
 
                 
